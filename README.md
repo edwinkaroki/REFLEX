@@ -273,3 +273,38 @@ We are building:
 	connectWebSocket,
 	disconnectWebSocket,
 } from "../../services/websocket";
+
+## Retailer Dashboard
+
+The retailer dashboard is API-ready and waits for the backend. It must not use mock deliveries, fake riders, localStorage business data, fake notifications, or WebSockets yet.
+
+Retailer responsibilities:
+
+- Manage retailer profile.
+- Create delivery requests.
+- View deliveries created by the authenticated retailer.
+- Monitor delivery status and delivery history.
+- View the assigned rider when the API provides one.
+
+Retailer implementation files:
+
+- `src/pages/retailer/RetailerDashboard.jsx`
+- `src/services/retailerApi.jsx`
+
+Expected endpoints:
+
+```text
+GET    /api/retailer/profile
+PATCH  /api/retailer/profile
+POST   /api/deliveries
+GET    /api/deliveries/my
+GET    /api/deliveries/:id
+```
+
+All retailer requests use the token from `localStorage.getItem("access_token")` only for authentication. Do not store profiles, deliveries, riders, or application state in localStorage.
+
+After `POST /api/deliveries` succeeds, the backend is responsible for making the new delivery available to the Dispatcher. The frontend does not simulate this with browser events, mock notifications, or WebSockets.
+
+The retailer UI must show loading, empty, success, authentication-missing, and API-error states. If the API is unavailable, show an error and do not replace it with fake data.
+
+The frontend is ready for the REST API but is waiting for backend implementation. WebSockets and real-time communication are intentionally not implemented yet.

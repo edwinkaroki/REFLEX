@@ -10,7 +10,7 @@ import {
 //} from "../../services/websocket";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, Bell, Bike, CheckCircle2, Clock3, MapPin, Package, Search, Truck, UserRound, X, Users, Navigation, AlertTriangle } from "lucide-react";
+import { ArrowRight, Bell, Bike, CheckCircle2, Clock3, Package, Search, Truck, UserRound, X, Users } from "lucide-react";
 import Sidebar from "../../components/shared/Sidebar";
 import StatCard from "../../components/dispatcher/StatCard";
 import StatusBadge from "../../components/dispatcher/StatusBadge";
@@ -30,8 +30,8 @@ const [riders, setRiders] = useState([]);
   const [riderSearch, setRiderSearch] = useState("");
   const [riderFilter, setRiderFilter] = useState("all");
   const [detailRider, setDetailRider] = useState(null);
- const [notifications, setNotifications] = useState([]);
   const [notificationOpen, setNotificationOpen] = useState(false);
+  const notifications = [];
   const active = deliveries.filter((delivery) => ["assigned", "picked_up", "out_for_delivery"].includes(delivery.status)).length;
   const outForDelivery = deliveries.filter((delivery) => delivery.status === "out_for_delivery").length;
   const delivered = deliveries.filter((delivery) => delivery.status === "delivered").length;
