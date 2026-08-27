@@ -3,11 +3,12 @@ import {
   getRiders,
   assignRider as assignRiderApi,
 } from "../../services/api";
+// Uncomment the following lines if you have a WebSocket service implemented
+ //import {
+	//connectWebSocket,
+//	disconnectWebSocket,
+//} from "../../services/websocket";
 
-import {
-	connectWebSocket,
-	disconnectWebSocket,
-} from "../../services/websocket";
 import { useEffect, useState } from "react";
 import { ArrowRight, Bell, Bike, CheckCircle2, Clock3, MapPin, Package, Search, Truck, UserRound, X, Users, Navigation, AlertTriangle } from "lucide-react";
 import Sidebar from "../../components/shared/Sidebar";
@@ -43,33 +44,33 @@ const [riders, setRiders] = useState([]);
   });
   const visibleDeliveries = showAllDeliveries ? filtered : filtered.slice(0, 4);
   const filteredRiders = riders.filter((rider) => (riderFilter === "all" || rider.status === riderFilter) && `${rider.name} ${rider.location}`.toLowerCase().includes(riderSearch.toLowerCase()));
-// websocket effect
-useEffect(() => {
-	const socket = connectWebSocket((message) => {
-		switch (message.event) {
-			case "delivery_status_changed":
-				console.log("Delivery status changed:", message.data);
-				break;
+// websock effect (uncomment if you have a WebSocket service implemented)
+// useEffect(() => {
+	//const socket = connectWebSocket((message) => {
+	//	switch (message.event) {
+		//	case "delivery_status_changed":
+				//console.log("Delivery status changed:", message.data);
+				//break;
 
-			case "rider_location_updated":
-				console.log("Rider location updated:", message.data);
-				break;
+		//	case "rider_location_updated":
+			//	console.log("Rider location updated:", message.data);
+		//		break;
 
-			case "delivery_assigned":
-				console.log("Delivery assigned:", message.data);
-				break;
+		//	case "delivery_assigned":
+			//	console.log("Delivery assigned:", message.data);
+			//	break;
 
-			default:
-				console.log("Unknown WebSocket event:", message.event);
-		}
-	});
+			//default:
+			//	console.log("Unknown WebSocket event:", message.event);
+	//	}
+	//});
 
-	return () => {
-		if (socket) {
-			disconnectWebSocket();
-		}
-	};
-}, []);
+	//return () => {
+	//	if (socket) {
+	//		disconnectWebSocket();
+//	}
+//	};
+//} []);
 //Assign rider to delivery
  async function assignRider(riderId, delivery = selectedDelivery) {
   const token = localStorage.getItem("access_token");
