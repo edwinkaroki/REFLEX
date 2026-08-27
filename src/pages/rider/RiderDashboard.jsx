@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bike, UserRound } from "lucide-react";
+import { Bike, UserRound, Truck, ID Card, Package, qr code } from "lucide-react";
 import Sidebar from "../../components/shared/Sidebar";
 
 export default function RiderDashboard({ role, setRole }) {
