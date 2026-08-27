@@ -6,6 +6,7 @@ const labels = {
 	delivered: "Delivered",
 	available: "Available",
 	on_delivery: "On delivery",
+	failed: "Failed",
 };
 
 export default function StatusBadge({ status }) {

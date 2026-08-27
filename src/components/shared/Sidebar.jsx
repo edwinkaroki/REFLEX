@@ -19,6 +19,7 @@ export default function Sidebar({
   setRole,
   mobileOpen,
   setMobileOpen,
+  onOperationClick,
 }) {
 
   const operationLinksByRole = {
@@ -105,6 +106,7 @@ export default function Sidebar({
 
             <button
               key={name}
+              onClick={() => onOperationClick?.(name)}
               className={`sidebar-link ${index === 0 ? "active" : ""}`}
             >
 
