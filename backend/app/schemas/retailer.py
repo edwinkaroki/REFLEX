@@ -1,0 +1,1 @@
+"""Retailer schemas boundary."""
