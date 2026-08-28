@@ -86,6 +86,7 @@ const [riders, setRiders] = useState([]);
   }
 
   try {
+      // TODO(backend): use the confirmed assignment response or refetch if local state is not authoritative.
     const assignment = await assignRiderApi(
       delivery.id,
       riderId,
@@ -149,6 +150,7 @@ useEffect(() => {
 
     try {
       const [deliveryData, riderData] = await Promise.all([
+        // TODO(backend): confirm these response shapes before replacing the temporary property access below.
         getDeliveries(token),
         getRiders(token),
       ]);
