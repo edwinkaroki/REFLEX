@@ -11,7 +11,7 @@ import Sidebar from "../../components/shared/Sidebar";
 import StatusBadge from "../../components/dispatcher/StatusBadge";
 import { getMyDeliveries } from "../../services/riderApi";
 
-export default function RiderDeliveries({ role, setRole, onNavigate }) {
+export default function RiderDeliveries({ role, setRole, onNavigate, mobileOpen, setMobileOpen }) {
   const [deliveries, setDeliveries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -54,12 +54,13 @@ export default function RiderDeliveries({ role, setRole, onNavigate }) {
 
   return (
     <div className="rider-shell rider-deliveries-shell">
-      <Sidebar role={role} setRole={setRole} onNavigate={onNavigate} />
+      <Sidebar role={role} setRole={setRole} onNavigate={onNavigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
 
       <main className="rider-main">
         <div className="rider-deliveries-content">
           {/* Header */}
           <div className="rider-profile-header">
+            <button className="mobile-menu rider-mobile-menu" onClick={() => setMobileOpen(true)} aria-label="Open navigation">Menu</button>
             <button
               onClick={() => onNavigate?.("dashboard")}
               className="outline-action rider-back-button"

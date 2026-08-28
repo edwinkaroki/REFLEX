@@ -10,13 +10,18 @@ import { completeDelivery, getCurrentDelivery, getMyDeliveryStats, getMyProfile,
 
 export default function RiderDashboardWrapper({ role, setRole }) {
   const [page, setPage] = useState("dashboard");
-  if (page === "deliveries") return <RiderDeliveries role={role} setRole={setRole} onNavigate={setPage} />;
-  if (page === "notifications") return <RiderNotifications role={role} setRole={setRole} onNavigate={setPage} />;
-  if (page === "profile") return <RiderProfile role={role} setRole={setRole} onNavigate={setPage} />;
-  return <RiderOverview role={role} setRole={setRole} onNavigate={setPage} />;
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = (nextPage) => {
+    setPage(nextPage);
+    setMobileOpen(false);
+  };
+  if (page === "deliveries") return <RiderDeliveries role={role} setRole={setRole} onNavigate={navigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />;
+  if (page === "notifications") return <RiderNotifications role={role} setRole={setRole} onNavigate={navigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />;
+  if (page === "profile") return <RiderProfile role={role} setRole={setRole} onNavigate={navigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />;
+  return <RiderOverview role={role} setRole={setRole} onNavigate={navigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />;
 }
 
-function RiderOverview({ role, setRole, onNavigate }) {
+function RiderOverview({ role, setRole, onNavigate, mobileOpen, setMobileOpen }) {
   const [profile, setProfile] = useState(null);
   const [delivery, setDelivery] = useState(null);
   const [stats, setStats] = useState({});
@@ -120,9 +125,9 @@ function RiderOverview({ role, setRole, onNavigate }) {
   const earnings = stats.earnings;
 
   return <div className="rider-shell">
-    <Sidebar role={role} setRole={setRole} onNavigate={onNavigate} />
+    <Sidebar role={role} setRole={setRole} onNavigate={onNavigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
     <main className="rider-main">
-      <div className="rider-topbar"><div className="rider-crumb">Workspace <b>/</b> <strong>Overview</strong></div><div className="rider-user"><span className="online-dot" /> {profile?.name || "Rider account unavailable"} <User size={15} /></div></div>
+      <div className="rider-topbar"><button className="mobile-menu rider-mobile-menu" onClick={() => setMobileOpen(true)} aria-label="Open navigation">Menu</button><div className="rider-crumb">Workspace <b>/</b> <strong>Overview</strong></div><div className="rider-user"><span className="online-dot" /> {profile?.name || "Rider account unavailable"} <User size={15} /></div></div>
       <div className="rider-content">
         <div className="rider-page-intro"><div><p className="rider-date">{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }).toUpperCase()}</p><h1>Rider Overview</h1><p>Stay on top of your route, deliveries, and earnings.</p></div><button className={`rider-location-button ${sharingLocation ? "is-sharing" : ""}`} onClick={toggleLocation}><LocateFixed size={16} />{sharingLocation ? "Location sharing on" : "Share my location"}</button></div>
         {(error || actionError) && <div className="rider-alert"><AlertCircle size={17} />{error || actionError}</div>}

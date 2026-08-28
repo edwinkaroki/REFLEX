@@ -11,7 +11,7 @@ import {
 import Sidebar from "../../components/shared/Sidebar";
 import { getMyNotifications } from "../../services/riderApi";
 
-export default function RiderNotifications({ role, setRole, onNavigate }) {
+export default function RiderNotifications({ role, setRole, onNavigate, mobileOpen, setMobileOpen }) {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -64,12 +64,13 @@ export default function RiderNotifications({ role, setRole, onNavigate }) {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar role={role} setRole={setRole} onNavigate={onNavigate} />
+      <Sidebar role={role} setRole={setRole} onNavigate={onNavigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
 
       <main className="flex-1 p-6">
         <div className="max-w-2xl mx-auto">
           {/* Header */}
           <div className="mb-6 flex items-center gap-4">
+            <button className="mobile-menu rider-mobile-menu" onClick={() => setMobileOpen(true)} aria-label="Open navigation">Menu</button>
             <button
               onClick={() => onNavigate?.("dashboard")}
               className="p-2 hover:bg-gray-200 rounded-lg transition"
