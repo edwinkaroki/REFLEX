@@ -17,6 +17,7 @@ import RoleSwitcher
 export default function Sidebar({
   role,
   setRole,
+  onNavigate,
   mobileOpen,
   setMobileOpen,
 }) {
@@ -106,6 +107,15 @@ export default function Sidebar({
             <button
               key={name}
               className={`sidebar-link ${index === 0 ? "active" : ""}`}
+              onClick={() =>
+                onNavigate?.(
+                  index === 0
+                    ? "dashboard"
+                    : name === "My deliveries"
+                      ? "deliveries"
+                      : "scan"
+                )
+              }
             >
 
               <Icon size={18} />
