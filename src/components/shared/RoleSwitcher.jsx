@@ -3,16 +3,21 @@ import { ChevronDown } from "lucide-react";
 export default function RoleSwitcher({
   role,
   setRole,
+  disabled = true,
 }) {
   return (
     <div className="role-switcher">
 
       <select
         value={role}
-        onChange={(e) =>
-          setRole(e.target.value)
-        }
+        onChange={(e) => {
+          if (!disabled) {
+            setRole?.(e.target.value);
+          }
+        }}
         className="role-select"
+        disabled={disabled}
+        aria-label="Current workspace role"
       >
 
         <option

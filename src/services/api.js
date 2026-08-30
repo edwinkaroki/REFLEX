@@ -6,7 +6,7 @@
  */
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+  import.meta.env.VITE_API_URL || "http://localhost:8001/api";
 
 // TODO(backend): confirm the production base URL and preserve VITE_API_URL configuration.
 
@@ -14,10 +14,17 @@ const API_BASE_URL =
  * Generic request helper
  */
 async function request(method, endpoint, options = {}) {
+  const token =
+    options.headers?.Authorization ||
+    (typeof window !== "undefined"
+      ? localStorage.getItem("access_token")
+      : null);
+
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method,
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
     body: options.body ? JSON.stringify(options.body) : undefined,
@@ -68,31 +75,25 @@ const api = {
 /**
  * Get deliveries for dispatcher dashboard
  */
-export async function getDeliveries(token) {
-  // TODO(backend): confirm list response shape consumed by DispatcherDashboard.
-  return api.get("/deliveries", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+export async function getDeliveries() {
+  const token = localStorage.getItem("access_token");
+  return api.get("/dispatcher/deliveries", {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
 }
 
 /**
  * Get riders for dispatcher dashboard
  */
-export async function getRiders(token) {
-  // TODO(backend): confirm rider list response shape consumed by DispatcherDashboard.
-  return api.get("/riders", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+export async function getRiders() {
+  const token = localStorage.getItem("access_token");
+  return api.get("/dispatcher/riders", {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
 }
-
-/**
- * Assign delivery to rider
- */
+ 
 export async function assignRider(deliveryId, riderId, token) {
+  //
   // TODO(backend): confirm assignment endpoint, method, payload names, and response shape.
   return api.post(
     "/assignments",

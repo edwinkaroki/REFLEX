@@ -111,10 +111,9 @@ header h2 { margin: 0 0 4px; font: 700 22px "Space Grotesk", sans-serif; }
 .assign-button { justify-self: end; padding: 8px 11px; border: 0; border-radius: 8px; color: white; background: var(--coral); font-size: 12px; font-weight: 600; }
 .status-badge { display: inline-flex; width: max-content; padding: 5px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; }
 .status-pending { color: #9a5a00; background: #fff3d7; }
-.status-assigned, .status-picked_up { color: #24638a; background: #e3f3fc; }
-.status-out_for_delivery { color: #8a4b25; background: #ffeadb; }
+.status-assigned, .status-picked_up, .status-in_transit { color: #24638a; background: #e3f3fc; }
 .status-delivered, .status-available { color: #24724a; background: #e3f6ea; }
-.status-on_delivery { color: #694e9c; background: #eee8fb; }
+.status-busy, .status-cancelled { color: #694e9c; background: #eee8fb; }
 .status-failed { color: #a45858; background: #fff0f0; }
 .rider-row { grid-template-columns: auto 1fr auto; }
 .rider-avatar { width: 34px; height: 34px; border-radius: 50%; color: var(--coral); background: #fff0e9; font-weight: 700; }

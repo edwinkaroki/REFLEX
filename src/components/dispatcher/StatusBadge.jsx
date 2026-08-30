@@ -2,11 +2,12 @@ const labels = {
 	pending: "Pending",
 	assigned: "Assigned",
 	picked_up: "Picked up",
-	out_for_delivery: "Out for delivery",
+	in_transit: "In transit",
 	delivered: "Delivered",
+	cancelled: "Cancelled",
 	available: "Available",
-	on_delivery: "On delivery",
-	failed: "Failed",
+	busy: "Busy",
+	offline: "Offline",
 };
 
 export default function StatusBadge({ status }) {

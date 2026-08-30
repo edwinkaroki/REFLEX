@@ -60,7 +60,7 @@ export const getMyDeliveries = (token, params = {}) => {
 /**
  * Update the status of a delivery
  * @param {string} deliveryId - Delivery ID
- * @param {string} status - New status (accepted, picked_up, out_for_delivery, delivered, failed)
+ * @param {string} status - New status (assigned, picked_up, in_transit, delivered)
  * @param {string} token - Bearer token
  * @returns {Promise<{status: number, data: object}>}
  */

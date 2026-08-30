@@ -17,7 +17,7 @@ import StatusBadge from "../../components/dispatcher/StatusBadge";
 import DeliveryTable from "../../components/dispatcher/DeliveryTable";
 
 
-export default function DispatcherDashboard({ role, setRole }) {
+export default function DispatcherDashboard({ role, setRole, activePage = "dashboard", setActivePage = () => {} }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [deliveries, setDeliveries] = useState([]);
 const [riders, setRiders] = useState([]);
@@ -32,14 +32,32 @@ const [riders, setRiders] = useState([]);
   const [detailRider, setDetailRider] = useState(null);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const notifications = [];
-  const active = deliveries.filter((delivery) => ["assigned", "picked_up", "out_for_delivery"].includes(delivery.status)).length;
-  const outForDelivery = deliveries.filter((delivery) => delivery.status === "out_for_delivery").length;
-  const delivered = deliveries.filter((delivery) => delivery.status === "delivered").length;
-  const pending = deliveries.filter((delivery) => delivery.status === "pending").length;
-  const failed = deliveries.filter((delivery) => delivery.status === "failed").length;
+  const active = deliveries.filter((delivery) =>
+  ["assigned", "picked_up", "in_transit"].includes(delivery.status)
+).length;
+
+const outForDelivery = deliveries.filter(
+  (delivery) => delivery.status === "in_transit"
+).length;
+
+const delivered = deliveries.filter(
+  (delivery) => delivery.status === "delivered"
+).length;
+
+const pending = deliveries.filter(
+  (delivery) => delivery.status === "pending"
+).length;
+
+const cancelled = deliveries.filter(
+  (delivery) => delivery.status === "cancelled"
+).length;
   const filtered = deliveries.filter((delivery) => {
-    const matchesSearch = `${delivery.id} ${delivery.customer_name} ${delivery.address}`.toLowerCase().includes(search.toLowerCase());
-    const matchesView = deliveryView === "all" || (deliveryView === "incoming" && delivery.status === "pending") || (deliveryView === "active" && ["assigned", "picked_up", "out_for_delivery"].includes(delivery.status)) || (deliveryView === "completed" && ["delivered", "failed"].includes(delivery.status));
+    const matchesSearch =
+  `${delivery.id} ${delivery.pickup_address} ${delivery.dropoff_address}`.toLowerCase().includes(search.toLowerCase());
+    const matchesView = deliveryView === "all" || (deliveryView === "incoming" && delivery.status === "pending") || (deliveryView === "active" &&
+  ["assigned", "picked_up", "in_transit"].includes(delivery.status)) ||
+(deliveryView === "completed" &&
+  ["delivered", "cancelled"].includes(delivery.status));
     return matchesSearch && matchesView && (statusFilter === "all" || delivery.status === statusFilter);
   });
   const visibleDeliveries = showAllDeliveries ? filtered : filtered.slice(0, 4);
@@ -141,24 +159,22 @@ async function autoAssign(delivery) {
 //access token
 useEffect(() => {
   async function loadDashboard() {
-    const token = localStorage.getItem("access_token");
-
-    if (!token) {
-      console.warn("No access token found.");
-      return;
-    }
-
     try {
-      const [deliveryData, riderData] = await Promise.all([
-        // TODO(backend): confirm these response shapes before replacing the temporary property access below.
-        getDeliveries(token),
-        getRiders(token),
-      ]);
+      const deliveryData = await getDeliveries();
+      console.log("🔥 DELIVERIES FROM API:", deliveryData);
 
-      setDeliveries(deliveryData.deliveries || []);
-      setRiders(riderData.riders || []);
+      const riderData = await getRiders();
+      console.log("🔥 RIDERS FROM API:", riderData);
+
+      setDeliveries(
+        Array.isArray(deliveryData) ? deliveryData : []
+      );
+
+      setRiders(
+        Array.isArray(riderData) ? riderData : []
+      );
     } catch (error) {
-      console.error("Failed to load dispatcher dashboard:", error);
+      console.error("🔥 DASHBOARD REQUEST FAILED:", error);
     }
   }
 
@@ -170,6 +186,8 @@ return (
     <Sidebar
       role={role}
       setRole={setRole}
+      activePage={activePage}
+      onNavigate={setActivePage}
       mobileOpen={mobileOpen}
       setMobileOpen={setMobileOpen}
     />
@@ -246,35 +264,36 @@ return (
           </div>
         </section>
 
-        {/* DELIVERY STATS */}
-        <section className="stats-grid">
-          <StatCard
-            title="Active deliveries"
-            value={String(active).padStart(2, "0")}
-            icon={<Package />}
-          />
+        {activePage === "dashboard" && (
+          <section className="stats-grid">
+            <StatCard
+              title="Active deliveries"
+              value={String(active).padStart(2, "0")}
+              icon={<Package />}
+            />
 
-          <StatCard
-            title="Out for delivery"
-            value={String(outForDelivery).padStart(2, "0")}
-            icon={<Truck />}
-          />
+            <StatCard
+              title="Out for delivery"
+              value={String(outForDelivery).padStart(2, "0")}
+              icon={<Truck />}
+            />
 
-          <StatCard
-            title="Delivered"
-            value={String(delivered).padStart(2, "0")}
-            icon={<Bike />}
-          />
+            <StatCard
+              title="Delivered"
+              value={String(delivered).padStart(2, "0")}
+              icon={<Bike />}
+            />
 
-          <StatCard
-            title="Pending"
-            value={String(pending).padStart(2, "0")}
-            icon={<Clock3 />}
-          />
-        </section>
+            <StatCard
+              title="Pending"
+              value={String(pending).padStart(2, "0")}
+              icon={<Clock3 />}
+            />
+          </section>
+        )}
 
-        {/* DELIVERIES */}
-        <section className="overview-grid">
+        {(activePage === "dashboard" || activePage === "deliveries") && (
+          <section className="overview-grid">
           <article className="panel deliveries-panel">
             <div className="panel-heading">
               <div>
@@ -451,149 +470,152 @@ return (
               </div>
             </article>
           </div>
-        </section>
+          </section>
+        )}
 
-        {/* RIDER MANAGEMENT */}
-        <section className="operations-grid">
-          <article className="panel">
-            <div className="panel-heading">
-              <div>
-                <h3>Rider management</h3>
-                <p>Riders returned by the API</p>
-              </div>
-
-              <Users
-                size={18}
-                className="panel-icon"
-              />
-            </div>
-
-            <div className="rider-tools">
-              <div className="search-box">
-                <Search size={15} />
-
-                <input
-                  value={riderSearch}
-                  onChange={(event) =>
-                    setRiderSearch(event.target.value)
-                  }
-                  placeholder="Search riders..."
-                />
-              </div>
-
-              <select
-                className="filter-button"
-                value={riderFilter}
-                onChange={(event) =>
-                  setRiderFilter(event.target.value)
-                }
-              >
-                <option value="all">All riders</option>
-                <option value="available">Available</option>
-                <option value="busy">Busy</option>
-                <option value="offline">Offline</option>
-              </select>
-            </div>
-
-            <div className="management-list">
-              {filteredRiders.map((rider) => (
-                <button
-                  className="management-row"
-                  key={rider.id}
-                  onClick={() => setDetailRider(rider)}
-                >
-                  <span className="rider-avatar">
-                    {rider.name?.charAt(0) || "R"}
-                  </span>
-
+        {activePage === "dashboard" && (
+          <>
+            <section className="operations-grid">
+              <article className="panel">
+                <div className="panel-heading">
                   <div>
-                    <strong>
-                      {rider.name || "Unknown rider"}
-                    </strong>
-
-                    <small>
-                      {rider.vehicle_type || "Vehicle unavailable"}
-                    </small>
+                    <h3>Rider management</h3>
+                    <p>Riders returned by the API</p>
                   </div>
 
-                  <StatusBadge status={rider.status} />
-                </button>
-              ))}
-            </div>
+                  <Users
+                    size={18}
+                    className="panel-icon"
+                  />
+                </div>
 
-            {filteredRiders.length === 0 && (
-              <p className="text-muted">
-                No riders returned by the API.
-              </p>
-            )}
-          </article>
-        </section>
+                <div className="rider-tools">
+                  <div className="search-box">
+                    <Search size={15} />
 
-        {/* DELIVERY HISTORY */}
-        <section className="panel history-panel">
-          <div className="panel-heading">
-            <div>
-              <h3>Delivery history</h3>
-              <p>Completed and cancelled delivery records</p>
-            </div>
+                    <input
+                      value={riderSearch}
+                      onChange={(event) =>
+                        setRiderSearch(event.target.value)
+                      }
+                      placeholder="Search riders..."
+                    />
+                  </div>
 
-            <span className="history-summary">
-              <CheckCircle2 size={14} />
-              {delivered} delivered
-              {" · "}
-              {failed} failed
-            </span>
-          </div>
+                  <select
+                    className="filter-button"
+                    value={riderFilter}
+                    onChange={(event) =>
+                      setRiderFilter(event.target.value)
+                    }
+                  >
+                    <option value="all">All riders</option>
+                    <option value="available">Available</option>
+                    <option value="busy">Busy</option>
+                    <option value="offline">Offline</option>
+                  </select>
+                </div>
 
-          <div className="history-list">
-            {deliveries
-              .filter((delivery) =>
+                <div className="management-list">
+                  {filteredRiders.map((rider) => (
+                    <button
+                      className="management-row"
+                      key={rider.id}
+                      onClick={() => setDetailRider(rider)}
+                    >
+                      <span className="rider-avatar">
+                        {rider.name?.charAt(0) || "R"}
+                      </span>
+
+                      <div>
+                        <strong>
+                          {rider.name || "Unknown rider"}
+                        </strong>
+
+                        <small>
+                          {rider.vehicle_type || "Vehicle unavailable"}
+                        </small>
+                      </div>
+
+                      <StatusBadge status={rider.status} />
+                    </button>
+                  ))}
+                </div>
+
+                {filteredRiders.length === 0 && (
+                  <p className="text-muted">
+                    No riders returned by the API.
+                  </p>
+                )}
+              </article>
+            </section>
+
+            <section className="panel history-panel">
+              <div className="panel-heading">
+                <div>
+                  <h3>Delivery history</h3>
+                  <p>Completed and cancelled delivery records</p>
+                </div>
+
+                <span className="history-summary">
+                  <CheckCircle2 size={14} />
+                  {delivered} delivered
+                  {" · "}
+                  {cancelled} cancelled
+                </span>
+              </div>
+
+              <div className="history-list">
+                {deliveries
+                  .filter((delivery) =>
+                    ["delivered", "cancelled"].includes(
+                      delivery.status
+                    )
+                  )
+                  .map((delivery) => (
+                    <div
+                      className="history-row"
+                      key={delivery.id}
+                    >
+                      <strong>#{delivery.id}</strong>
+
+                      <span>
+                        {delivery.customer_name ||
+                          "Customer"}
+                      </span>
+
+                      <span>
+                        {delivery.dropoff_address ||
+                          "Dropoff unavailable"}
+                      </span>
+
+                      <StatusBadge status={delivery.status} />
+
+                      <button
+                        className="row-view"
+                        onClick={() =>
+                          setDetailDelivery(delivery)
+                        }
+                      >
+                        View
+                        <ArrowRight size={13} />
+                      </button>
+                    </div>
+                  ))}
+              </div>
+
+              {deliveries.filter((delivery) =>
                 ["delivered", "cancelled"].includes(
                   delivery.status
                 )
-              )
-              .map((delivery) => (
-                <div
-                  className="history-row"
-                  key={delivery.id}
-                >
-                  <strong>#{delivery.id}</strong>
-
-                  <span>
-                    {delivery.customer_name ||
-                      "Customer"}
-                  </span>
-
-                  <span>
-                    {delivery.dropoff_address ||
-                      "Dropoff unavailable"}
-                  </span>
-
-                  <StatusBadge status={delivery.status} />
-
-                  <button
-                    className="row-view"
-                    onClick={() =>
-                      setDetailDelivery(delivery)
-                    }
-                  >
-                    View
-                    <ArrowRight size={13} />
-                  </button>
-                </div>
-              ))}
-          </div>
-
-          {deliveries.filter((delivery) =>
-            ["delivered", "cancelled"].includes(
-              delivery.status
-            )
-          ).length === 0 && (
-            <p className="text-muted">
-              No completed delivery records returned by the API.
-            </p>
-          )}
-        </section>
+              ).length === 0 && (
+                <p className="text-muted">
+                  No completed delivery records returned by the API.
+                </p>
+              )}
+            </section>
+          </>
+        )}
       </div>
     </main>
 
