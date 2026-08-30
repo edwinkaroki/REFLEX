@@ -4,5 +4,7 @@ DELIVERY_CREATED = "delivery.created"
 DELIVERY_ASSIGNED = "delivery.assigned"
 DELIVERY_STATUS_UPDATED = "delivery.status_updated"
 RIDER_LOCATION_UPDATED = "rider.location_updated"
+RIDER_AVAILABILITY_UPDATED = "rider.availability_updated"
+NOTIFICATION_CREATED = "notification.created"
 
 # TODO(backend): confirm event envelope, authentication, recipient scoping, and payloads.
