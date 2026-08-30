@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.models.delivery import Delivery, DeliveryStatus
 from app.schemas.delivery import DeliveryCreate
+from app.websocket.events import emit_delivery_created
 
 
 def create_delivery(
@@ -22,6 +23,16 @@ def create_delivery(
     db.add(delivery)
     db.commit()
     db.refresh(delivery)
+
+    emit_delivery_created(
+        delivery_id=str(delivery.id),
+        retailer_id=str(retailer_id),
+        payload={
+            "status": delivery.status.value,
+            "pickup_address": delivery.pickup_address,
+            "dropoff_address": delivery.dropoff_address,
+        },
+    )
 
     return delivery
 

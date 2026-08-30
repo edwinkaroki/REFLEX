@@ -8,6 +8,7 @@ from app.models.assignment import Assignment, AssignmentStatus
 from app.models.delivery import Delivery, DeliveryEvent, DeliveryStatus
 from app.models.rider import Rider, RiderStatus
 from app.schemas.assignment import AssignmentCreate, AssignmentStatusUpdate
+from app.websocket.events import emit_delivery_assigned, emit_delivery_status_changed
 
 
 def create_assignment(
@@ -181,6 +182,18 @@ def update_assignment_status(
     db.add(event)
     db.commit()
     db.refresh(assignment)
+
+    emit_delivery_status_changed(
+        delivery_id=str(assignment.delivery_id),
+        rider_id=str(assignment.rider_id),
+        retailer_id=str(delivery.retailer_id),
+        payload={
+            "assignment_id": str(assignment.id),
+            "from": current_status.value,
+            "to": new_status.value,
+            "status": new_status.value,
+        },
+    )
 
     return assignment
 

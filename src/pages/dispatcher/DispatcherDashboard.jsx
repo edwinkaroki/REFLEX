@@ -3,11 +3,10 @@ import {
   getRiders,
   assignRider as assignRiderApi,
 } from "../../services/api";
-// Uncomment the following lines if you have a WebSocket service implemented
- //import {
-	//connectWebSocket,
-//	disconnectWebSocket,
-//} from "../../services/websocket";
+import {
+  connectWebSocket,
+  disconnectWebSocket,
+} from "../../services/websocket";
 
 import { useEffect, useState } from "react";
 import { ArrowRight, Bell, Bike, CheckCircle2, Clock3, Package, Search, Truck, UserRound, X, Users } from "lucide-react";
@@ -20,7 +19,7 @@ import DeliveryTable from "../../components/dispatcher/DeliveryTable";
 export default function DispatcherDashboard({ role, setRole, activePage = "dashboard", setActivePage = () => {} }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [deliveries, setDeliveries] = useState([]);
-const [riders, setRiders] = useState([]);
+  const [riders, setRiders] = useState([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [deliveryView, setDeliveryView] = useState("incoming");
@@ -32,9 +31,24 @@ const [riders, setRiders] = useState([]);
   const [detailRider, setDetailRider] = useState(null);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const notifications = [];
+
+  async function refreshDashboard() {
+    try {
+      const [deliveryData, riderData] = await Promise.all([
+        getDeliveries(),
+        getRiders(),
+      ]);
+
+      setDeliveries(Array.isArray(deliveryData) ? deliveryData : []);
+      setRiders(Array.isArray(riderData) ? riderData : []);
+    } catch (error) {
+      console.error("🔥 DASHBOARD REQUEST FAILED:", error);
+    }
+  }
+
   const active = deliveries.filter((delivery) =>
-  ["assigned", "picked_up", "in_transit"].includes(delivery.status)
-).length;
+    ["assigned", "picked_up", "in_transit"].includes(delivery.status)
+  ).length;
 
 const outForDelivery = deliveries.filter(
   (delivery) => delivery.status === "in_transit"
@@ -156,29 +170,8 @@ async function autoAssign(delivery) {
   await assignRider(availableRider.id, delivery);
 }
  
-//access token
 useEffect(() => {
-  async function loadDashboard() {
-    try {
-      const deliveryData = await getDeliveries();
-      console.log("🔥 DELIVERIES FROM API:", deliveryData);
-
-      const riderData = await getRiders();
-      console.log("🔥 RIDERS FROM API:", riderData);
-
-      setDeliveries(
-        Array.isArray(deliveryData) ? deliveryData : []
-      );
-
-      setRiders(
-        Array.isArray(riderData) ? riderData : []
-      );
-    } catch (error) {
-      console.error("🔥 DASHBOARD REQUEST FAILED:", error);
-    }
-  }
-
-  loadDashboard();
+  refreshDashboard();
 }, []);
 
 return (

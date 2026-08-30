@@ -3,6 +3,7 @@ import { AlertCircle, Bike, CheckCircle2, ChevronRight, CircleDollarSign, Clock3
 import Sidebar from "../../components/shared/Sidebar";
 import StatCard from "../../components/dispatcher/StatCard";
 import StatusBadge from "../../components/dispatcher/StatusBadge";
+import { connectWebSocket, disconnectWebSocket } from "../../services/websocket";
 import RiderDeliveries from "./RiderDeliveries";
 import RiderNotifications from "./RiderNotifications";
 import RiderProfile from "./RiderProfile";
@@ -35,31 +36,55 @@ function RiderOverview({ role, setRole, activePage = "dashboard", onNavigate, mo
   const [handoffConfirmed, setHandoffConfirmed] = useState(false);
   const token = localStorage.getItem("access_token");
 
-  useEffect(() => {
-    async function loadDashboard() {
-      setLoading(true);
-      setError(null);
+  async function loadDashboard() {
+    setLoading(true);
+    setError(null);
 
-      try {
-        const [profileResult, deliveryResult, statsResult] = await Promise.all([
-          getMyProfile(token),
-          getCurrentDelivery(token),
-          getMyDeliveryStats(token),
+    try {
+      const [profileResult, deliveryResult, statsResult] = await Promise.all([
+        getMyProfile(token),
+        getCurrentDelivery(token),
+        getMyDeliveryStats(token),
+      ]);
+
+      setProfile(profileResult || null);
+      setDelivery(deliveryResult || null);
+      setStats(statsResult || {});
+    } catch (requestError) {
+      setProfile(null);
+      setDelivery(null);
+      setStats({});
+      setError(requestError?.message || "Unable to connect to the rider service.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadDashboard();
+  }, [token]);
+
+  useEffect(() => {
+    if (!token) return undefined;
+
+    const socket = connectWebSocket({
+      token,
+      onEvent: (message) => {
+        const relevantEvents = new Set([
+          "delivery.status_changed",
+          "rider.availability_updated",
+          "delivery.assigned",
         ]);
 
-        setProfile(profileResult || null);
-        setDelivery(deliveryResult || null);
-        setStats(statsResult || {});
-      } catch (requestError) {
-        setProfile(null);
-        setDelivery(null);
-        setStats({});
-        setError(requestError?.message || "Unable to connect to the rider service.");
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadDashboard();
+        if (relevantEvents.has(message.event)) {
+          loadDashboard();
+        }
+      },
+    });
+
+    return () => {
+      disconnectWebSocket(socket);
+    };
   }, [token]);
 
   useEffect(() => {

@@ -3,6 +3,7 @@ import { Building2, PackagePlus, RefreshCw, Search, X } from "lucide-react";
 import Sidebar from "../../components/shared/Sidebar";
 import StatCard from "../../components/dispatcher/StatCard";
 import StatusBadge from "../../components/dispatcher/StatusBadge";
+import { connectWebSocket, disconnectWebSocket } from "../../services/websocket";
 import { createDelivery, getDelivery, getRetailerDeliveries, getRetailerProfile, updateRetailerProfile } from "../../services/retailerApi";
 
 const emptyDelivery = {
@@ -66,6 +67,30 @@ export default function RetailerDashboard({ role, setRole, activePage = "dashboa
   useEffect(() => {
     const timer = window.setTimeout(loadDashboard, 0);
     return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const token = readToken();
+    if (!token) return undefined;
+
+    const socket = connectWebSocket({
+      token,
+      onEvent: (message) => {
+        const relevantEvents = new Set([
+          "delivery.created",
+          "delivery.assigned",
+          "delivery.status_changed",
+        ]);
+
+        if (relevantEvents.has(message.event)) {
+          loadDashboard();
+        }
+      },
+    });
+
+    return () => {
+      disconnectWebSocket(socket);
+    };
   }, []);
 
   async function handleProfileSubmit(event) {

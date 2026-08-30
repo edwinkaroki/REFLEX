@@ -12,6 +12,7 @@ from app.models.location import RiderLocation
 from app.models.notification import Notification
 from app.models.rider import Rider, RiderStatus
 from app.models.user import User
+from app.websocket.events import emit_delivery_status_changed, emit_rider_availability_updated
 
 
 def _get_rider_for_user(db: Session, user: User) -> Rider:
@@ -100,6 +101,13 @@ def update_rider_availability(
     rider.status = _normalize_rider_status(value)
     db.commit()
     db.refresh(rider)
+
+    emit_rider_availability_updated(
+        rider_user_id=str(current_user.id),
+        rider_id=str(rider.id),
+        status=rider.status.value,
+    )
+
     return _serialize_rider_profile(db, current_user, rider)
 
 
@@ -253,6 +261,26 @@ def update_rider_delivery_status(
     db.refresh(delivery)
     db.refresh(assignment)
     db.refresh(rider)
+
+    emit_delivery_status_changed(
+        delivery_id=str(delivery.id),
+        rider_id=str(rider.id),
+        retailer_id=str(delivery.retailer_id),
+        payload={
+            "from": previous_status,
+            "to": new_status,
+            "status": new_status,
+            "rider_id": str(rider.id),
+            "assignment_id": str(assignment.id),
+        },
+    )
+
+    if rider.status.value in {"available", "busy", "offline"}:
+        emit_rider_availability_updated(
+            rider_user_id=str(current_user.id),
+            rider_id=str(rider.id),
+            status=rider.status.value,
+        )
 
     return _serialize_delivery_for_rider(db, delivery, rider)
 
