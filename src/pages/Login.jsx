@@ -14,6 +14,11 @@ export default function Login({ onLogin }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  function handleRoleChange(event) {
+    setSelectedRole(event.target.value);
+    setError("");
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -52,19 +57,22 @@ export default function Login({ onLogin }) {
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-2">Persona</label>
-          <div className="grid grid-cols-3 gap-2">
+          <label htmlFor="persona" className="block text-sm font-medium mb-2">
+            Persona
+          </label>
+
+          <select
+            id="persona"
+            value={selectedRole}
+            onChange={handleRoleChange}
+            className="w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-slate-900 focus:outline-none"
+          >
             {roles.map((role) => (
-              <button
-                key={role.value}
-                type="button"
-                className={`px-3 py-2 rounded border text-sm font-medium ${selectedRole === role.value ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-700 border-slate-300"}`}
-                onClick={() => setSelectedRole(role.value)}
-              >
+              <option key={role.value} value={role.value}>
                 {role.label}
-              </button>
+              </option>
             ))}
-          </div>
+          </select>
         </div>
 
         {error && (

@@ -64,7 +64,13 @@ All passwords have been set to valid bcrypt hashes in the live database.
    - Enter the email and password
    - You will receive a real JWT token from the backend
    - The app will display the appropriate dashboard for that role
+5. **Logging out**
+Open the browser DevTools on the page, then paste this into the Console tab:
 
+localStorage.removeItem("access_token");
+localStorage.removeItem("user_role");
+localStorage.removeItem("user_id");
+location.reload();
 ## Verification Checklist
 
 - ✅ Backend API endpoint: `POST /api/auth/login`

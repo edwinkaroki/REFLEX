@@ -6,7 +6,7 @@
 
 INSERT INTO riders (id, user_id, phone, vehicle_type, status) VALUES
     ('55555555-5555-5555-5555-555555555555', '33333333-3333-3333-3333-333333333333', '+254700000001', 'motorbike', 'available'),
-    ('66666666-6666-6666-6666-666666666666', '44444444-4444-4444-4444-444444444444', '+254700000002', 'bicycle', 'offline');
+    ('66666666-6666-6666-6666-666666666666', '44444444-4444-4444-4444-444444444444', '+254700000002', 'bicycle', 'available');
 
 INSERT INTO deliveries (id, retailer_id, pickup_address, dropoff_address, status) VALUES
     ('77777777-7777-7777-7777-777777777777', '11111111-1111-1111-1111-111111111111', 'Westlands, Nairobi', 'Kilimani, Nairobi', 'assigned'),

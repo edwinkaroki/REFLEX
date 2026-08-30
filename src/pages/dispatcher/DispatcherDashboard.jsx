@@ -23,8 +23,8 @@ export default function DispatcherDashboard({ role, setRole, activePage = "dashb
 const [riders, setRiders] = useState([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [deliveryView, setDeliveryView] = useState("active");
-  const [showAllDeliveries, setShowAllDeliveries] = useState(false);
+  const [deliveryView, setDeliveryView] = useState("incoming");
+  const [showAllDeliveries, setShowAllDeliveries] = useState(true);
   const [selectedDelivery, setSelectedDelivery] = useState(null);
   const [detailDelivery, setDetailDelivery] = useState(null);
   const [riderSearch, setRiderSearch] = useState("");
@@ -404,7 +404,7 @@ return (
                   <button
                     className="attention-item"
                     key={delivery.id}
-                    onClick={() => setDetailDelivery(delivery)}
+                    onClick={() => setSelectedDelivery(delivery)}
                   >
                     <span className="attention-icon clock">
                       <Clock3 size={17} />
@@ -754,6 +754,20 @@ return (
               </strong>
             </span>
           </div>
+
+          {detailDelivery.status === "pending" && (
+            <div style={{ marginTop: "1rem" }}>
+              <button
+                className="assign-button"
+                onClick={() => {
+                  setSelectedDelivery(detailDelivery);
+                  setDetailDelivery(null);
+                }}
+              >
+                Assign rider
+              </button>
+            </div>
+          )}
         </div>
       </div>
     )}

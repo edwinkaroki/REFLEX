@@ -38,17 +38,26 @@ function RiderOverview({ role, setRole, activePage = "dashboard", onNavigate, mo
   useEffect(() => {
     async function loadDashboard() {
       setLoading(true);
-      const results = await Promise.all([
-        getMyProfile(token).catch((requestError) => ({ error: requestError })),
-        getCurrentDelivery(token).catch((requestError) => ({ error: requestError })),
-        getMyDeliveryStats(token).catch((requestError) => ({ error: requestError })),
-      ]);
-      const [profileResult, deliveryResult, statsResult] = results;
-      if (results.every((result) => result.error)) setError("Unable to connect to the rider service.");
-      setProfile(profileResult.error ? null : profileResult);
-      setDelivery(deliveryResult.error ? null : deliveryResult);
-      setStats(statsResult.error ? {} : statsResult);
-      setLoading(false);
+      setError(null);
+
+      try {
+        const [profileResult, deliveryResult, statsResult] = await Promise.all([
+          getMyProfile(token),
+          getCurrentDelivery(token),
+          getMyDeliveryStats(token),
+        ]);
+
+        setProfile(profileResult || null);
+        setDelivery(deliveryResult || null);
+        setStats(statsResult || {});
+      } catch (requestError) {
+        setProfile(null);
+        setDelivery(null);
+        setStats({});
+        setError(requestError?.message || "Unable to connect to the rider service.");
+      } finally {
+        setLoading(false);
+      }
     }
     loadDashboard();
   }, [token]);
