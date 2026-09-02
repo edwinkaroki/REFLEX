@@ -46,33 +46,37 @@ export default function Login({ onLogin }) {
   }
 
   return (
-    <div className="min-h-screen bg-canvas flex items-center justify-center px-4">
-      <div className="panel w-full max-w-md p-6">
-        <div className="mb-6">
+    <div className="min-h-screen bg-canvas flex items-center justify-center px-4 login-shell">
+      <div className="panel w-full max-w-md p-6 login-panel">
+        <div className="mb-6 login-heading">
+          <div className="login-mark" aria-hidden="true"><span>R</span></div>
           <p className="date-label">REFLEX DELIVERY PLATFORM</p>
 
-          <h1 className="text-2xl font-semibold mt-2">Sign in</h1>
+          <h1 className="text-2xl font-semibold mt-2">Move every delivery forward.</h1>
 
-          <p className="text-muted mt-1">Use your Docker/Postgres account for the selected persona.</p>
+          <p className="text-muted mt-1">Sign in to your workspace and keep every handoff in motion.</p>
         </div>
 
-        <div className="mb-4">
+        <div className="mb-4 login-persona">
           <label htmlFor="persona" className="block text-sm font-medium mb-2">
             Persona
           </label>
 
-          <select
-            id="persona"
-            value={selectedRole}
-            onChange={handleRoleChange}
-            className="w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-slate-900 focus:outline-none"
-          >
-            {roles.map((role) => (
-              <option key={role.value} value={role.value}>
-                {role.label}
-              </option>
-            ))}
-          </select>
+          <div className="login-select-wrap">
+            <select
+              id="persona"
+              value={selectedRole}
+              onChange={handleRoleChange}
+              className="login-role-select"
+            >
+              {roles.map((role) => (
+                <option key={role.value} value={role.value}>
+                  {role.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <span className="login-field-hint">Choose the workspace you want to enter.</span>
         </div>
 
         {error && (
