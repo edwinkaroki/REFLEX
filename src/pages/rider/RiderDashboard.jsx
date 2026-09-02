@@ -9,21 +9,21 @@ import RiderNotifications from "./RiderNotifications";
 import RiderProfile from "./RiderProfile";
 import { completeDelivery, getCurrentDelivery, getMyDeliveryStats, getMyProfile, scanDeliveryQR, updateDeliveryStatus, updateMyAvailability } from "../../services/riderApi";
 
-export default function RiderDashboardWrapper({ role, setRole, activePage = "dashboard", setActivePage = () => {} }) {
+export default function RiderDashboardWrapper({ role, setRole, activePage = "dashboard", setActivePage = () => {}, onLogout }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = (nextPage) => {
     setActivePage(nextPage);
     setMobileOpen(false);
   };
 
-  if (activePage === "deliveries") return <RiderDeliveries role={role} setRole={setRole} activePage={activePage} onNavigate={navigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />;
-  if (activePage === "notifications") return <RiderNotifications role={role} setRole={setRole} activePage={activePage} onNavigate={navigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />;
-  if (activePage === "profile") return <RiderProfile role={role} setRole={setRole} activePage={activePage} onNavigate={navigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />;
-  if (activePage === "scan") return <RiderOverview role={role} setRole={setRole} activePage={activePage} onNavigate={navigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />;
-  return <RiderOverview role={role} setRole={setRole} activePage={activePage} onNavigate={navigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />;
+  if (activePage === "deliveries") return <RiderDeliveries role={role} setRole={setRole} activePage={activePage} onNavigate={navigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} onLogout={onLogout} />;
+  if (activePage === "notifications") return <RiderNotifications role={role} setRole={setRole} activePage={activePage} onNavigate={navigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} onLogout={onLogout} />;
+  if (activePage === "profile") return <RiderProfile role={role} setRole={setRole} activePage={activePage} onNavigate={navigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} onLogout={onLogout} />;
+  if (activePage === "scan") return <RiderOverview role={role} setRole={setRole} activePage={activePage} onNavigate={navigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} onLogout={onLogout} />;
+  return <RiderOverview role={role} setRole={setRole} activePage={activePage} onNavigate={navigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} onLogout={onLogout} />;
 }
 
-function RiderOverview({ role, setRole, activePage = "dashboard", onNavigate, mobileOpen, setMobileOpen }) {
+function RiderOverview({ role, setRole, activePage = "dashboard", onNavigate, mobileOpen, setMobileOpen, onLogout }) {
   const [profile, setProfile] = useState(null);
   const [delivery, setDelivery] = useState(null);
   const [stats, setStats] = useState({});
@@ -166,7 +166,7 @@ function RiderOverview({ role, setRole, activePage = "dashboard", onNavigate, mo
   const earnings = stats.earnings;
 
   return <div className="rider-shell">
-    <Sidebar role={role} setRole={setRole} activePage={activePage} onNavigate={onNavigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
+    <Sidebar role={role} setRole={setRole} activePage={activePage} onNavigate={onNavigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} onLogout={onLogout} />
     <main className="rider-main">
       <div className="rider-topbar"><button className="mobile-menu rider-mobile-menu" onClick={() => setMobileOpen(true)} aria-label="Open navigation">Menu</button><div className="rider-crumb">Workspace <b>/</b> <strong>Overview</strong></div><div className="rider-user"><span className="online-dot" /> {profile?.name || "Rider account unavailable"} <User size={15} /></div></div>
       <div className="rider-content">

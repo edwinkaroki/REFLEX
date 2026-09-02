@@ -1,4 +1,16 @@
- 
+# Reflex Delivery Platform
+
+## Overview
+Reflex is a delivery coordination platform for retailers, dispatchers, and riders. It connects delivery creation, rider assignment, and lifecycle tracking in one shared workflow.
+
+## Project docs
+- Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- Presentation deck: [docs/PRESENTATION_DECK.md](docs/PRESENTATION_DECK.md)
+- Trade-off log: [docs/TRADEOFF_LOG.md](docs/TRADEOFF_LOG.md)
+- Demo script: [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md)
+- Timing log: [docs/TIMING_LOG.md](docs/TIMING_LOG.md)
+- Live credentials: [LIVE_CREDENTIALS.md](LIVE_CREDENTIALS.md)
+
 ## Before Starting
 
 After cloning the repository:

@@ -16,7 +16,7 @@ import StatusBadge from "../../components/dispatcher/StatusBadge";
 import DeliveryTable from "../../components/dispatcher/DeliveryTable";
 
 
-export default function DispatcherDashboard({ role, setRole, activePage = "dashboard", setActivePage = () => {} }) {
+export default function DispatcherDashboard({ role, setRole, activePage = "dashboard", setActivePage = () => {}, onLogout }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [deliveries, setDeliveries] = useState([]);
   const [riders, setRiders] = useState([]);
@@ -183,6 +183,7 @@ return (
       onNavigate={setActivePage}
       mobileOpen={mobileOpen}
       setMobileOpen={setMobileOpen}
+      onLogout={onLogout}
     />
 
     <main className="md:ml-64">

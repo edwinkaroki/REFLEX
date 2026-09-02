@@ -183,7 +183,11 @@ The current delivery status flow is aligned to the schema contract:
 - `in_transit`
 - `delivered`
 
-## 10) How to clear local login data
+## 10) How to log out
+
+Use the **Logout** button in the sidebar. It clears the current browser session and returns you to the login page.
+
+If the app is stuck on an old session, you can use the browser storage fallback below.
 
 If you want to return to the login page, clear the browser storage for the app.
 

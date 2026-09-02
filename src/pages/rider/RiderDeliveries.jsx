@@ -11,7 +11,7 @@ import Sidebar from "../../components/shared/Sidebar";
 import StatusBadge from "../../components/dispatcher/StatusBadge";
 import { getMyDeliveries } from "../../services/riderApi";
 
-export default function RiderDeliveries({ role, setRole, onNavigate, mobileOpen, setMobileOpen }) {
+export default function RiderDeliveries({ role, setRole, onNavigate, mobileOpen, setMobileOpen, onLogout }) {
   const [deliveries, setDeliveries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -54,7 +54,7 @@ export default function RiderDeliveries({ role, setRole, onNavigate, mobileOpen,
 
   return (
     <div className="rider-shell rider-deliveries-shell">
-      <Sidebar role={role} setRole={setRole} onNavigate={onNavigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
+      <Sidebar role={role} setRole={setRole} onNavigate={onNavigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} onLogout={onLogout} />
 
       <main className="rider-main">
         <div className="rider-deliveries-content">
