@@ -27,7 +27,7 @@ function readToken() {
   return token;
 }
 
-export default function RetailerDashboard({ role, setRole, activePage = "dashboard", setActivePage = () => {} }) {
+export default function RetailerDashboard({ role, setRole, activePage = "dashboard", setActivePage = () => {}, onLogout }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profile, setProfile] = useState(null);
   const [profileForm, setProfileForm] = useState({ business_name: "", contact_name: "", phone: "", email: "" });
@@ -149,7 +149,7 @@ export default function RetailerDashboard({ role, setRole, activePage = "dashboa
 
   return (
     <div className="min-h-screen bg-canvas">
-      <Sidebar role={role} setRole={setRole} activePage={activePage} onNavigate={setActivePage} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
+      <Sidebar role={role} setRole={setRole} activePage={activePage} onNavigate={setActivePage} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} onLogout={onLogout} />
       <main className="md:ml-64">
         <header className="topbar"><div className="breadcrumbs"><span>Workspace</span><b>/</b><strong>Retailer overview</strong></div><div className="topbar-actions"><strong>Retailer view</strong><button className="mobile-menu" onClick={() => setMobileOpen(true)}>Menu</button></div></header>
         <div className="dashboard-content retailer-dashboard">

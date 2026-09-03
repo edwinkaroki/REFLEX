@@ -11,7 +11,7 @@ import {
 import Sidebar from "../../components/shared/Sidebar";
 import { getMyNotifications } from "../../services/riderApi";
 
-export default function RiderNotifications({ role, setRole, onNavigate, mobileOpen, setMobileOpen }) {
+export default function RiderNotifications({ role, setRole, onNavigate, mobileOpen, setMobileOpen, onLogout }) {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -64,7 +64,7 @@ export default function RiderNotifications({ role, setRole, onNavigate, mobileOp
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar role={role} setRole={setRole} onNavigate={onNavigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
+      <Sidebar role={role} setRole={setRole} onNavigate={onNavigate} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} onLogout={onLogout} />
 
       <main className="flex-1 p-6">
         <div className="max-w-2xl mx-auto">

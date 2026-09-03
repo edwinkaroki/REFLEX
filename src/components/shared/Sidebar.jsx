@@ -8,6 +8,7 @@ import {
   ChevronDown,
   PlusCircle,
   ScanQrCode,
+  LogOut,
 } from "lucide-react";
 
 import RoleSwitcher
@@ -22,6 +23,7 @@ export default function Sidebar({
   mobileOpen,
   setMobileOpen,
   onOperationClick,
+  onLogout,
 }) {
   const operationLinksByRole = {
     dispatcher: [
@@ -94,6 +96,10 @@ export default function Sidebar({
         <p className="sidebar-section-label account-label">Account</p>
         <button className="sidebar-link"><Settings2 size={18} />Settings</button>
         <button className="sidebar-link"><CircleHelp size={18} />Help center</button>
+        <button className="sidebar-link" onClick={onLogout}>
+          <LogOut size={18} />
+          Logout
+        </button>
       </nav>
     </aside>
   );
