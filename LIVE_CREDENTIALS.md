@@ -372,7 +372,7 @@ The development PostgreSQL database contains the following test accounts.
 
 ```text
 Email: jane@retailer.com
-Password: retailer123
+Password: devpass123
 User ID: 11111111-1111-1111-1111-111111111111
 Role: retailer
 ```
@@ -381,7 +381,7 @@ Role: retailer
 
 ```text
 Email: dan@dispatch.com
-Password: dispatcher123
+Password: devpass123
 User ID: 22222222-2222-2222-2222-222222222222
 Role: dispatcher
 ```
@@ -390,7 +390,7 @@ Role: dispatcher
 
 ```text
 Email: rider1@fleet.com
-Password: rider123
+Password: devpass123
 User ID: 33333333-3333-3333-3333-333333333333
 Role: rider
 ```
@@ -399,7 +399,7 @@ Role: rider
 
 ```text
 Email: rider2@fleet.com
-Password: rider123
+Password: devpass123
 User ID: 44444444-4444-4444-4444-444444444444
 Role: rider
 ```
